@@ -434,8 +434,14 @@ class cog_coop(commands.GroupCog, group_name="coop", group_description="Coop com
         
         # add user to thread
         await user.add_roles(coop.role)
+        # 
+        await thread.edit(name=coop.title)
+        
         # send message:
         await thread.send(f"{user.mention} joined the coop")
+        
+        # 
+        self._cached_threads[thread.id] = coop
     
         
 async def setup(bot : commands.Bot):
