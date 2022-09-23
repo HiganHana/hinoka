@@ -434,6 +434,7 @@ class cog_coop(commands.GroupCog, group_name="coop", group_description="Coop com
         
         # add user to thread
         await user.add_roles(coop.role)
+        coop.current_participants += 1
         # 
         await thread.edit(name=coop.title)
         
