@@ -3,7 +3,7 @@ from functools import cached_property
 import typing
 from uuid import uuid4
 import discord
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from higanhanaSdk.dc.embed import Embedx
 from discord.ext import commands
 
@@ -25,7 +25,7 @@ class CoopEmbed(BaseModel):
     type : COOP_TYPE_LITERAL
     max_participants : int = None
     current_participants : int = 1
-    created_at : datetime = datetime.utcnow()
+    created_at : datetime = Field(default_factory=datetime.now)
     
     class Config:
         arbitrary_types_allowed = True
@@ -45,14 +45,11 @@ class CoopEmbed(BaseModel):
         if self.name is None or self.name == "":
             self.name = type_
         
+        self.expire_time = self.created_at + timedelta(minutes=self.expire_in)
     
     @property
     def gotta_add_waitlist(self):
         return self.current_participants >= self.max_participants
-    
-    @cached_property
-    def expire_time(self):
-        return self.created_at + timedelta(minutes=self.expire_in_min)
     
     async def add_participant(self, ctx : discord.Interaction, user : typing.Union[discord.User, discord.Member]):
         if self.role is None:
