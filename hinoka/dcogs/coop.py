@@ -16,7 +16,7 @@ utc=pytz.UTC
 class cog_coop(commands.GroupCog, group_name="coop", group_description="Coop commands"):
     def __init__(self, bot : commands.Bot):
         self._bot = bot
-        self._coop_channel = None
+        self._coop_channel : discord.ForumChannel = None
         self._cached_threads = {}
         super().__init__()
         self.remove_expired_role_task.start()
@@ -76,6 +76,8 @@ class cog_coop(commands.GroupCog, group_name="coop", group_description="Coop com
             reason=f"Coop created by {ctx.user} for {coop.type}", 
             embed=embed
         )
+        await msg.add_reaction("🆗")
+        
         
         await thread.add_user(ctx.user)
     
@@ -108,11 +110,12 @@ class cog_coop(commands.GroupCog, group_name="coop", group_description="Coop com
 
             )
     
-        # get coop embed (first message)
-        msg : discord.Message = await thread.fetch_message(thread.id)
-        embed : discord.Embed = msg.embeds[0]
-        
         if thread.id not in self._cached_threads:
+            
+            # get coop embed (first message)
+            msg : discord.Message = await thread.fetch_message(thread.id)
+            embed : discord.Embed = msg.embeds[0]
+        
             coop = await CoopEmbed.create_from_embed(self._bot, ctx.guild,thread.name,embed)
         else:
             coop = self._cached_threads[thread.id]
@@ -377,6 +380,59 @@ class cog_coop(commands.GroupCog, group_name="coop", group_description="Coop com
             
         await ctx.response.send_message("done", ephemeral=True)
     
+    # on reaction (raw reaction)
+    @commands.Cog.listener("on_raw_reaction_add")
+    async def on_raw_reaction_add(self, payload : discord.RawReactionActionEvent):
+        # check not bot
+        if payload.member.bot:
+            return
+        
+        if self._coop_channel is None:
+            return
+        
+        # check if in coop channel
+        if payload.channel_id != self._coop_channel.id:
+            return
+        
+        # check reaction
+        if payload.emoji.name != "🆗":
+            return
+        
+        # check if in thread
+        guild = self._bot.get_guild(payload.guild_id)
+        if guild is None:
+            return
+        
+        thread = guild.get_thread(payload.channel_id)
+        if not isinstance(thread, discord.Thread):
+            return
+        
+        if thread.parent_id != self._coop_channel.id:
+            return
+        
+        if thread.id not in self._cached_threads:
+            
+            # get coop embed (first message)
+            msg : discord.Message = await thread.fetch_message(thread.id)
+            embed : discord.Embed = msg.embeds[0]
+        
+            coop = await CoopEmbed.create_from_embed(self._bot, guild,thread.name,embed)
+        else:
+            coop = self._cached_threads[thread.id]
+        
+        # check if user is in thread
+        user = guild.get_member(payload.user_id)
+        if user is None:
+            return
+        
+        if coop.role in user.roles:
+            return
+        
+        # add user to thread
+        await user.add_roles(coop.role)
+        # send message:
+        await thread.send(f"{user.mention} joined the coop")
     
+        
 async def setup(bot : commands.Bot):
     await bot.add_cog(cog_coop(bot))
