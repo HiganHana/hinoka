@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 from functools import cached_property
+from math import floor
 import typing
 from uuid import uuid4
 import discord
@@ -54,9 +55,9 @@ class CoopEmbed(BaseModel):
     async def add_participant(self, ctx : discord.Interaction, user : typing.Union[discord.User, discord.Member]):
         if self.role is None:
             
-            timestamp = int(self.expire_time.timestamp())
+            timestamp = floor(self.expire_time.timestamp())
             
-            role_name = "COOP_" + timestamp
+            role_name = "COOP_" + str(timestamp)
             new_role = await ctx.guild.create_role(
                 name=role_name, 
                 colour = discord.Colour.red(), 
