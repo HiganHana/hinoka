@@ -35,9 +35,10 @@ class cog_coop(commands.GroupCog, group_name="coop", group_description="Coop com
         # get all roles prefixed with "COOP_"
         coop_roles = [role for role in guild.roles if role.name.startswith("COOP_")]
         utc_now =datetime.utcnow()
+        utc_now = utc.localize(utc_now)
         for role in coop_roles:
             timebit = role.name.split("_")[1]
-            datetime_object = datetime.fromtimestamp(int(timebit))
+            datetime_object = datetime.fromtimestamp(int(timebit), tz=utc)
             if utc_now > datetime_object:
                 await role.delete()
                 print(f"Deleted role {role.name}")
@@ -397,12 +398,8 @@ class cog_coop(commands.GroupCog, group_name="coop", group_description="Coop com
         if self._coop_channel is None:
             return
         
-        # check if in coop channel
-        if payload.channel_id != self._coop_channel.id:
-            return
-        
         # check reaction
-        if payload.emoji.name != "🆗":
+        if payload.emoji.name != '🆗':
             return
         
         # check if in thread

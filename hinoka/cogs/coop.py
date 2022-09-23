@@ -21,7 +21,7 @@ COOP_TYPE_LITERAL = typing.Literal[
 class CoopEmbed(BaseModel):
     name : str
     author : typing.Union[discord.User, discord.Member]
-    expire_in : int
+    expire_in : int = 24
     role : discord.Role = None
     type : COOP_TYPE_LITERAL
     max_participants : int = None
@@ -46,7 +46,7 @@ class CoopEmbed(BaseModel):
         if self.name is None or self.name == "":
             self.name = type_
         
-        object.__setattr__(self, "expire_time", self.created_at + timedelta(seconds=self.expire_in))
+        object.__setattr__(self, "expire_time", self.created_at + timedelta(hours=self.expire_in))
     
     @property
     def gotta_add_waitlist(self):
