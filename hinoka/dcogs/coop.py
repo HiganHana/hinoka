@@ -69,10 +69,14 @@ class cog_coop(commands.GroupCog, group_name="coop", group_description="Coop com
         # apply role to user
         await ctx.user.add_roles(coop.role)
         
+        auto_archive_duration = coop.expire_in * 60
+        if auto_archive_duration > 1440:
+            auto_archive_duration = 4320
+        
         # create thread post in forum channel
         thread, msg = await self._coop_channel.create_thread(
             name=title, 
-            auto_archive_duration=1440, 
+            auto_archive_duration=auto_archive_duration, 
             reason=f"Coop created by {ctx.user} for {coop.type}", 
             embed=embed
         )
@@ -341,7 +345,7 @@ class cog_coop(commands.GroupCog, group_name="coop", group_description="Coop com
         # create thread post in forum channel
         thread, msg = await self._coop_channel.create_thread(
             name=title, 
-            auto_archive_duration=coop.expire_in * 60, 
+            auto_archive_duration=24 * 60, 
             reason=f"Coop created by {ctx.user} for {coop.type}", 
             embed=embed,
         )
