@@ -351,6 +351,9 @@ class cog_coop(commands.GroupCog, group_name="coop", group_description="Coop com
         )
         thread : discord.Thread
         
+        # reaction
+        await msg.add_reaction("🆗")
+        
         await thread.add_user(ctx.user)
     
         #
