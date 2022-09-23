@@ -45,7 +45,7 @@ class CoopEmbed(BaseModel):
         if self.name is None or self.name == "":
             self.name = type_
         
-        self.expire_time = self.created_at + timedelta(minutes=self.expire_in)
+        object.__setattr__(self, "expire_time", self.created_at + timedelta(seconds=self.expire_in))
     
     @property
     def gotta_add_waitlist(self):
