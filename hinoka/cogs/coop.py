@@ -1,4 +1,5 @@
-from datetime import datetime
+from datetime import datetime, timedelta
+from functools import cached_property
 import typing
 from uuid import uuid4
 import discord
@@ -19,10 +20,12 @@ COOP_TYPE_LITERAL = typing.Literal[
 class CoopEmbed(BaseModel):
     name : str
     author : typing.Union[discord.User, discord.Member]
+    expire_in : int
     role : discord.Role = None
     type : COOP_TYPE_LITERAL
     max_participants : int = None
     current_participants : int = 1
+    created_at : datetime = datetime.utcnow()
     
     class Config:
         arbitrary_types_allowed = True
@@ -47,10 +50,16 @@ class CoopEmbed(BaseModel):
     def gotta_add_waitlist(self):
         return self.current_participants >= self.max_participants
     
+    @cached_property
+    def expire_time(self):
+        return self.created_at + timedelta(minutes=self.expire_in_min)
+    
     async def add_participant(self, ctx : discord.Interaction, user : typing.Union[discord.User, discord.Member]):
         if self.role is None:
-            uuid_generation_bit = str(uuid4())[-6:]
-            role_name = "COOP_" + uuid_generation_bit
+            
+            timestamp = int(self.expire_time.timestamp())
+            
+            role_name = "COOP_" + timestamp
             new_role = await ctx.guild.create_role(
                 name=role_name, 
                 colour = discord.Colour.red(), 
@@ -93,12 +102,14 @@ class CoopEmbed(BaseModel):
         author : discord.User,
         type : COOP_TYPE_LITERAL,
         max_participants : int = None,
+        expire_in : int = 60*24
     ):
         return cls(
             name=name,
             author=author,
             type=type,
             max_participants=max_participants,
+            expire_in=expire_in
         )
     
     @classmethod

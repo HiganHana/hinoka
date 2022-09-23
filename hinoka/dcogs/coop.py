@@ -36,20 +36,24 @@ class cog_coop(commands.GroupCog, group_name="coop", group_description="Coop com
         coop_roles = [role for role in guild.roles if role.name.startswith("COOP_")]
         utc_now =datetime.utcnow()
         for role in coop_roles:
-            if role.created_at + timedelta(hours=48) < utc.localize(utc_now):
+            timebit = role.name.split("_")[1]
+            datetime_object = datetime.fromtimestamp(int(timebit))
+            if utc_now > datetime_object:
                 await role.delete()
                 print(f"Deleted role {role.name}")
         
         if self._coop_channel is None:
             self._coop_channel : ForumChannel = await self._bot.fetch_channel(hinokaConfig.COOP_FORUM)
-
+        
     @app_commands.command(name="create", description="Create a coop post (use the other command to create tof stargate)")
     @commands.cooldown(1, 300, commands.BucketType.user)
+    @commands.cooldown(1, 5, commands.BucketType.guild)
     async def create(self, 
         ctx : Interaction,
         type : COOP_TYPE_LITERAL,
         name : str = "", 
         max_participants : int = None,
+        expire_in : int = 24
     ):  
         
         coop = CoopEmbed.create(
@@ -57,6 +61,7 @@ class cog_coop(commands.GroupCog, group_name="coop", group_description="Coop com
             type=type,
             author=ctx.user,
             max_participants=max_participants,
+            expire_in=expire_in
         )
 
         embed, title = await coop.to_embed(ctx)
@@ -333,7 +338,7 @@ class cog_coop(commands.GroupCog, group_name="coop", group_description="Coop com
         # create thread post in forum channel
         thread, msg = await self._coop_channel.create_thread(
             name=title, 
-            auto_archive_duration=1440, 
+            auto_archive_duration=coop.expire_in * 60, 
             reason=f"Coop created by {ctx.user} for {coop.type}", 
             embed=embed,
         )
