@@ -13,7 +13,7 @@ class Yahallo(View):
         
     @discord.ui.button(label="Apply Honkai Guild", style=discord.ButtonStyle.green)
     async def apply_honkai(self, interaction: discord.Interaction, button: discord.ui.Button):
-        await interaction.user.add_roles(discord.utils.get(self._ctx.guild.roles, id=hinokaConfig.pending_impact_role))
+        await interaction.user.add_roles(discord.utils.get(interaction.guild.roles, id=hinokaConfig.pending_impact_role))
         await interaction.response.send_message("Applied for Honkai Impact 3rd guild", ephemeral=True)
         # disable
         button.disabled = True
@@ -21,7 +21,7 @@ class Yahallo(View):
         
     @discord.ui.button(label="Apply Tof Guild", style=discord.ButtonStyle.green)
     async def apply_tof(self,interaction: discord.Interaction, button: discord.ui.Button ):
-        await interaction.user.add_roles(discord.utils.get(self._ctx.guild.roles, id=hinokaConfig.pending_tof_role))
+        await interaction.user.add_roles(discord.utils.get(interaction.guild.roles, id=hinokaConfig.pending_tof_role))
         await interaction.response.send_message("Applied for Tof guild", ephemeral=True)
         # disable
         button.disabled = True
