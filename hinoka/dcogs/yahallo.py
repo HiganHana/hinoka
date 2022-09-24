@@ -41,6 +41,9 @@ class cog_yahallo(commands.Cog):
         
         
     async def standard_guildeee_registry(self, ctx : Interaction):
+        if not ctx.channel_id == 752408444165685298:
+            return False
+        
         if self.yahallo_role is None:
             self.yahallo_role = get(ctx.guild.roles, id=hinokaConfig.yahallo_role)
         
@@ -57,12 +60,12 @@ class cog_yahallo(commands.Cog):
         return True
         
             
-    @app_commands.command(name="yahallo")
+    @app_commands.command(name="yahallo", description="Inducts you into the server")
     @commands.cooldown(1, 600, commands.BucketType.user)
     async def yahallo(self, ctx : Interaction):
         await self.standard_guildeee_registry(ctx)
     
-    @app_commands.command(name="yahello")
+    @app_commands.command(name="yahello", description="Inducts you into the server")
     @commands.cooldown(1, 600, commands.BucketType.user)
     async def yahello(self, ctx : Interaction):
         results = await self.standard_guildeee_registry(ctx)
