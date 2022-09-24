@@ -17,7 +17,7 @@ class Yahallo(View):
         await interaction.response.send_message("Applied for Honkai Impact 3rd guild", ephemeral=True)
         # disable
         button.disabled = True
-        await interaction.message.edit(view=self)
+        await interaction.response.edit_message(view=self)
         
     @discord.ui.button(label="Apply Tof Guild", style=discord.ButtonStyle.green)
     async def apply_tof(self,interaction: discord.Interaction, button: discord.ui.Button ):
@@ -25,7 +25,7 @@ class Yahallo(View):
         await interaction.response.send_message("Applied for Tof guild", ephemeral=True)
         # disable
         button.disabled = True
-        await interaction.message.edit(view=self)
+        await interaction.response.edit_message(view=self)
             
 
 class cog_yahallo(commands.Cog):
