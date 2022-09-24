@@ -55,7 +55,7 @@ class cog_yahallo(commands.Cog):
         
         await ctx.user.add_roles(self.yahallo_role)
 
-        await ctx.response.send_message(embed=self.induction_embed, view=Yahallo(ctx=ctx), ephemeral=True)
+        await ctx.response.send_message(embed=self.induction_embed, view=Yahallo(), ephemeral=True)
 
         return True
         
