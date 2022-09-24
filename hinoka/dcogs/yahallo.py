@@ -10,24 +10,21 @@ class Yahallo(View):
     """
    a view also asking if you want to apply for honkai or tof 
     """
-    def __init__(self, ctx : discord.Interaction,*, timeout = 180):
-        super().__init__(timeout=timeout)
-        self._ctx = ctx
         
     @discord.ui.button(label="Apply Honkai Guild", style=discord.ButtonStyle.green)
-    async def apply_honkai(self, button: discord.ui.Button, interaction: discord.Interaction):
-        await self._ctx.user.add_roles(discord.utils.get(self._ctx.guild.roles, id=hinokaConfig.pending_impact_role))
+    async def apply_honkai(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.user.add_roles(discord.utils.get(self._ctx.guild.roles, id=hinokaConfig.pending_impact_role))
+        await interaction.response.send_message("Applied for Honkai Impact 3rd guild", ephemeral=True)
         # disable
         button.disabled = True
-        button.label = "Honkai Applied"
         await interaction.message.edit(view=self)
         
     @discord.ui.button(label="Apply Tof Guild", style=discord.ButtonStyle.green)
-    async def apply_tof(self, button: discord.ui.Button, interaction: discord.Interaction):
-        await self._ctx.user.add_roles(discord.utils.get(self._ctx.guild.roles, id=hinokaConfig.pending_tof_role))
+    async def apply_tof(self,interaction: discord.Interaction, button: discord.ui.Button ):
+        await interaction.user.add_roles(discord.utils.get(self._ctx.guild.roles, id=hinokaConfig.pending_tof_role))
+        await interaction.response.send_message("Applied for Tof guild", ephemeral=True)
         # disable
         button.disabled = True
-        button.label = "Tof Applied"
         await interaction.message.edit(view=self)
             
 
