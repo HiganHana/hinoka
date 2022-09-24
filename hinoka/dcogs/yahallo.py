@@ -10,24 +10,27 @@ class Yahallo(View):
     """
    a view also asking if you want to apply for honkai or tof 
     """
+    def __init__(self, ctx : discord.Interaction,*, timeout = 180):
+        super().__init__(timeout=timeout)
+        self._ctx = ctx
+        
     @discord.ui.button(label="Apply Honkai Guild", style=discord.ButtonStyle.green)
     async def apply_honkai(self, button: discord.ui.Button, interaction: discord.Interaction):
-        await interaction.user.add_roles(discord.utils.get(interaction.guild.roles, id=hinokaConfig.pending_impact_role))
-        await interaction.response.send_message("You have applied for the Honkai Guild", ephemeral=True)
+        await self._ctx.user.add_roles(discord.utils.get(self._ctx.guild.roles, id=hinokaConfig.pending_impact_role))
         # disable
         button.disabled = True
+        button.label = "Honkai Applied"
         await interaction.message.edit(view=self)
         
     @discord.ui.button(label="Apply Tof Guild", style=discord.ButtonStyle.green)
     async def apply_tof(self, button: discord.ui.Button, interaction: discord.Interaction):
-        await interaction.user.add_roles(discord.utils.get(interaction.guild.roles, id=hinokaConfig.pending_tof_role))
-        await interaction.response.send_message("You have applied for the Tof Guild", ephemeral=True)
+        await self._ctx.user.add_roles(discord.utils.get(self._ctx.guild.roles, id=hinokaConfig.pending_tof_role))
         # disable
         button.disabled = True
+        button.label = "Tof Applied"
         await interaction.message.edit(view=self)
             
-    
-        
+
 class cog_yahallo(commands.Cog):
     def __init__(self, bot : commands.Bot):
         self._bot = bot
@@ -55,7 +58,7 @@ class cog_yahallo(commands.Cog):
         
         await ctx.user.add_roles(self.yahallo_role)
 
-        await ctx.response.send_message(embed=self.induction_embed, view=Yahallo(), ephemeral=True)
+        await ctx.response.send_message(embed=self.induction_embed, view=Yahallo(ctx=ctx), ephemeral=True)
 
         return True
         
