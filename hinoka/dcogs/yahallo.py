@@ -14,18 +14,12 @@ class Yahallo(View):
     @discord.ui.button(label="Apply Honkai Guild", style=discord.ButtonStyle.green)
     async def apply_honkai(self, interaction: discord.Interaction, button: discord.ui.Button):
         await interaction.user.add_roles(discord.utils.get(interaction.guild.roles, id=hinokaConfig.pending_impact_role))
-        await interaction.response.send_message("Applied for Honkai Impact 3rd guild", ephemeral=True)
-        # disable
-        button.disabled = True
-        await interaction.response.edit_message(view=self)
+        await interaction.response.send_message(f" {interaction.user.mention} Applied for Honkai guild")
         
     @discord.ui.button(label="Apply Tof Guild", style=discord.ButtonStyle.green)
     async def apply_tof(self,interaction: discord.Interaction, button: discord.ui.Button ):
         await interaction.user.add_roles(discord.utils.get(interaction.guild.roles, id=hinokaConfig.pending_tof_role))
-        await interaction.response.send_message("Applied for Tof guild", ephemeral=True)
-        # disable
-        button.disabled = True
-        await interaction.response.edit_message(view=self)
+        await interaction.channel.send(f"{interaction.user.mention} Applied for Tof guild")
             
 
 class cog_yahallo(commands.Cog):
@@ -55,7 +49,7 @@ class cog_yahallo(commands.Cog):
         
         await ctx.user.add_roles(self.yahallo_role)
 
-        await ctx.response.send_message(embed=self.induction_embed, view=Yahallo(), ephemeral=True)
+        await ctx.response.send_message(embed=self.induction_embed, view=Yahallo(timeout=20), ephemeral=True)
 
         return True
         
@@ -74,7 +68,7 @@ class cog_yahallo(commands.Cog):
             self.clown_role = get(ctx.guild.roles, id=hinokaConfig.clown_card_holder)
             
         if results:
-            await ctx.response.send_message("You are a clown. Enjoy your clown card", ephemeral=True)
+            await ctx.channel.send("You are a clown. Enjoy your clown card", ephemeral=True)
             await ctx.user.add_roles(self.clown_role)
             
             
