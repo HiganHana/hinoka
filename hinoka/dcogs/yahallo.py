@@ -10,18 +10,34 @@ class Yahallo(View):
     """
    a view also asking if you want to apply for honkai or tof 
     """
+    def __init__(self, *, timeout = 180):
+        super().__init__(timeout=timeout)
+        self._honkai_applied =False
+        self._tof_applied = False
+
         
     @discord.ui.button(label="Apply Honkai Guild", style=discord.ButtonStyle.green)
     async def apply_honkai(self, interaction: discord.Interaction, button: discord.ui.Button):
+        if self._honkai_applied:
+            self.stop()
+            return
+        
         await interaction.user.add_roles(discord.utils.get(interaction.guild.roles, id=hinokaConfig.pending_impact_role))
         await interaction.channel.send(f" {interaction.user.mention} Applied for Honkai guild")
-        
+        self._honkai_applied = True
+    
     @discord.ui.button(label="Apply Tof Guild", style=discord.ButtonStyle.green)
     async def apply_tof(self,interaction: discord.Interaction, button: discord.ui.Button ):
+        if self._tof_applied:
+            self.stop()
+            return
+        
         await interaction.user.add_roles(discord.utils.get(interaction.guild.roles, id=hinokaConfig.pending_tof_role))
         await interaction.channel.send(f"{interaction.user.mention} Applied for Tof guild")
-            
-
+        self._tof_applied = True    
+    
+        
+        
 class cog_yahallo(commands.Cog):
     def __init__(self, bot : commands.Bot):
         self._bot = bot
