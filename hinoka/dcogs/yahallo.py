@@ -14,7 +14,7 @@ class Yahallo(View):
     @discord.ui.button(label="Apply Honkai Guild", style=discord.ButtonStyle.green)
     async def apply_honkai(self, interaction: discord.Interaction, button: discord.ui.Button):
         await interaction.user.add_roles(discord.utils.get(interaction.guild.roles, id=hinokaConfig.pending_impact_role))
-        await interaction.response.send_message(f" {interaction.user.mention} Applied for Honkai guild")
+        await interaction.channel.send(f" {interaction.user.mention} Applied for Honkai guild")
         
     @discord.ui.button(label="Apply Tof Guild", style=discord.ButtonStyle.green)
     async def apply_tof(self,interaction: discord.Interaction, button: discord.ui.Button ):
