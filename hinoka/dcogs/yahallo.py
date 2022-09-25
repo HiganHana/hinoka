@@ -43,14 +43,20 @@ class cog_yahallo(commands.Cog):
         self._bot = bot
         self.yahallo_role = None
         self.clown_role = None
-        
+        self.chaotic_chat_channel = None
         self.induction_embed = Embedx.Success(
             "Welcome",
-            "You have been inducted into the server."
+            """You have been inducted into the server.
+            Check out <#943019261025189888> to pick your roles
+            And <#1023072421001052190> for guides
+            """
         )
         
         
     async def standard_guildeee_registry(self, ctx : Interaction):
+        if self.chaotic_chat_channel is None:
+            self.chaotic_chat_channel = self._bot.get_channel(hinokaConfig.chaotic_chat_channel)
+        
         if not ctx.channel_id == 752408444165685298:
             return False
         
@@ -74,6 +80,7 @@ class cog_yahallo(commands.Cog):
     @commands.cooldown(1, 600, commands.BucketType.user)
     async def yahallo(self, ctx : Interaction):
         await self.standard_guildeee_registry(ctx)
+        await self.chaotic_chat_channel.send(f"a wild {ctx.user.mention} just appeared")
     
     @app_commands.command(name="yahello", description="Inducts you into the server")
     @commands.cooldown(1, 600, commands.BucketType.user)
@@ -86,7 +93,8 @@ class cog_yahallo(commands.Cog):
         if results:
             await ctx.channel.send("You are a clown. Enjoy your clown card", ephemeral=True)
             await ctx.user.add_roles(self.clown_role)
-            
+        
+        await self.chaotic_chat_channel.send(f"a wild {ctx.user.mention} clown just appeared")
             
         
 async def setup(bot : commands.Bot):
