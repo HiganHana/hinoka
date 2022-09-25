@@ -47,7 +47,7 @@ class cog_yahallo(commands.Cog):
         self.induction_embed = Embedx.Success(
             "Welcome",
             """You have been inducted into the server.
-            Check out <#943019261025189888> to pick your roles
+            Check out <#943019261025189888> to pick your interests
             And <#1023072421001052190> for guides
             """
         )
