@@ -29,6 +29,13 @@ class cog_coop(commands.GroupCog, group_name="coop", group_description="Coop com
         """
         Check if the coop channel is set and if it is, return it.
         """
+        # add a guard clause
+        if not hasattr(self, "_xguard"):
+            self._xguard = True
+            return
+        else:
+            pass 
+        
         guild = await self._bot.fetch_guild(728455513532006491)
         guild : discord.Guild
         
@@ -245,7 +252,6 @@ class cog_coop(commands.GroupCog, group_name="coop", group_description="Coop com
         
         # delete thread
         await thread.delete()
-        
         
         
         if thread.id in self._cached_threads:
