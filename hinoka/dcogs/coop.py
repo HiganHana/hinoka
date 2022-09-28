@@ -24,9 +24,6 @@ class cog_coop(commands.GroupCog, group_name="coop", group_description="Coop com
     @tasks.loop(hours=24)
     async def remove_expired_role_task(self):
         """
-        Check if there are new coop threads.
-        """
-        """
         Check if the coop channel is set and if it is, return it.
         """
         # add a guard clause
@@ -331,7 +328,7 @@ class cog_coop(commands.GroupCog, group_name="coop", group_description="Coop com
             image = acidproof_2
         
         if name is None:
-            name = ""
+            name = type
             
         name = f"TOF-Gate {rarity}{name}"
         
