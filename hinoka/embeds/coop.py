@@ -2,7 +2,7 @@ from discordPyExt import EmbedX, EmbedFactory
 import typing
 
 coop_banner_embedf = EmbedFactory(
-    title="[COOP] {name}",
+    title="{name}",
     color=0x00ff00,
     description="{notes}"
 ).field(
