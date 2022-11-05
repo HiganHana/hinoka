@@ -194,7 +194,7 @@ class CoopBanner(View):
         # edit embed
         reparsed = coop_banner_embedf.editEmbed(embed, 
             current_participants = mentions_text,
-            current_count = len(members),
+            current_count = len(members)+1,
         )
 
         # edit embed
