@@ -134,6 +134,12 @@ class cog_coop(GroupCogX, group_name="coop", group_description="Hinoka's coop co
         )
     
     @app_commands.command(name="create_tof_gate")
+    @app_commands.describe(
+        material="",
+        star="",
+        name="",
+        notes=""
+    )
     async def create_tof_gate(
         self,
         ctx : Interaction,
@@ -195,6 +201,10 @@ class cog_coop(GroupCogX, group_name="coop", group_description="Hinoka's coop co
         self,
         ctx : Interaction,
     ):
+        """
+        purge all archived coops
+        """
+        
         # get all guild roles starting with COOP_
         roles = {int(role.name.split("_")[1]): role for role in ctx.guild.roles if role.name.startswith("COOP_")}
                  
