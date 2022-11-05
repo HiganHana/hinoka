@@ -210,8 +210,8 @@ class cog_coop(GroupCogX, group_name="coop", group_description="Hinoka's coop co
                  
         # get all threads in coop channel
         coop_channel : ForumChannel = storage.COOP_CHANNEL
-        threads : typing.Iterable[Thread] = coop_channel.threads
-        threads : typing.Dict[int, Thread] = {thread.id: thread for thread in threads}
+        threads : list[Thread] = coop_channel.threads
+        threads : typing.Dict[int, Thread] = {int(thread.id): thread for thread in threads}
         
         await ctx.response.defer()
         
@@ -225,7 +225,9 @@ class cog_coop(GroupCogX, group_name="coop", group_description="Hinoka's coop co
             await role.delete()
             await discord_api_log(f"{ctx.user} purged {role.name}")
             # delete the thread
-            await threads[id].delete()
+            
+            if id in threads:
+                await threads[id].delete()
     
         await ctx.channel.send("COOP Purge complete")
     
