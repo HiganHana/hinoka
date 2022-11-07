@@ -200,7 +200,7 @@ class CoopBanner(View):
         # edit embed
         await interaction.message.edit(
             content=coop_thread_meta.format(
-                current_count=len(members),
+                current_count=len(members)+1,
                 max_participants=embed_keys.get("max_participants"),
                 overflow=embed_keys.get("overflow"),
             ),
