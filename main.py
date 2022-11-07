@@ -29,9 +29,7 @@ class CustomBotX(BotX):
 
     
 deployer = DcDeployer(
-    extensions=[
-        DeployFlask,
-    ],
+    extensions=[],
     path='hinoka',
     storage=storage,
     config=config,
