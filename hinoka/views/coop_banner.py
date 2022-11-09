@@ -68,6 +68,9 @@ class CoopBanner(View):
         )
         
         # if meeting max participants
+        if embed_keys.get("max_participants") == "No Limit":
+            return
+        
         if int(current_count) + 1 >= int(embed_keys.get("max_participants")) and "[FULL]" not in interaction.message.channel.name:
             await interaction.channel.edit(
                 name=f"[FULL] {interaction.channel.name}", 
@@ -246,7 +249,10 @@ class CoopBanner(View):
         # if meeting max participants
         current_thread_name = interaction.message.channel.name
         future_thread_name = current_thread_name
-        if int(current_count) == int(embed_keys.get("max_participants")) and "[FULL]" not in interaction.message.channel.name:
+        if (embed_keys.get("max_participants") != "No Limit"
+            and int(current_count) == int(embed_keys.get("max_participants")) 
+            and "[FULL]" not in interaction.message.channel.name
+        ):
             future_thread_name = f"[FULL] {current_thread_name}"
             
         if future_thread_name != current_thread_name:
