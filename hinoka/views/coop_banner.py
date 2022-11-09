@@ -1,3 +1,4 @@
+from typing import AsyncIterator
 from discord.ui import View
 import discord
 from hinoka.cog.log import discord_api_log
@@ -193,12 +194,15 @@ class CoopBanner(View):
         if len(mentions) == 0:
             # use fetch
             guild : discord.Guild = interaction.guild
-            roles = await guild.fetch_roles()
-            role = discord.utils.get(roles, name=f"COOP_{thread_id}")
+            member_iterator : AsyncIterator[discord.Member] = guild.fetch_members()
+            
             # make sure coordinator excluded
-            members = [member for member in guild.members if role in member.roles and member.id != coordinator_id]
-            mentions = [member.mention for member in members]
-    
+            mentions = []
+            async for member in member_iterator:
+                if role in member.roles and member.id != coordinator_id:
+                    mentions.append(member.mention)
+
+            
         
         # get mentions text
         mentions_text = "\n".join(mentions)
