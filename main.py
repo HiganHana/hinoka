@@ -21,11 +21,13 @@ class CustomBotX(BotX):
         
     async def on_ready(self):
         await super().on_ready()
+        # get guild
+        storage.GUILD = await self.fetch_guild(config.GUILD)
+    
         storage.LOG_CHANNEL = self.get_channel(config.LOG_CHANNEL)
+        storage.COOP_CHANNEL = self.get_channel(config.COOP_CHANNEL)
         
-        if storage.get("COOP_CHANNEL") is None:
-            storage.COOP_CHANNEL = await self.fetch_channel(config.COOP_CHANNEL)
-            await discord_api_log("Coop Channel inited")
+        await discord_api_log("Coop Channel inited")
 
     
 deployer = DcDeployer(
