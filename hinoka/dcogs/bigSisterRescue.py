@@ -18,27 +18,31 @@ class cog_sisterRescue(commands.Cog):
         self.bot = bot
         self._last_rescue_time = None
         self._check_for_big_sis_status.start()
-
+    
     @tasks.loop(hours=3, reconnect=True)
     async def _check_for_big_sis_status(self):
-        guild : discord.Guild = storage.get("GUILD")
-        if guild is None:
-            print("Guild not found")
-            return
+        guild : discord.Guild= storage.get("GUILD")
         
+        await self._sister_rescue(guild)
+
+    @_check_for_big_sis_status.before_loop
+    async def before_printer(self):
+        print('waiting for bot ready...')
+        await self.bot.wait_until_ready()
+
+    async def _sister_rescue(self, guild, force :bool= False):
         big_sis_id = config.BIG_SIS_ID
-        
-        
-        last_check_timestamp = config.get("LAST_RESCUE_CHECKED_TIMESTAMP")
-        if last_check_timestamp is None:
-            last_check_timestamp = datetime.utcnow().timestamp()
+    
+        last_check = config.get("LAST_RESCUE_CHECKED_TIMESTAMP")
+        if last_check is None:
+            last_check = datetime.utcnow()
         else:
-            last_check_timestamp = datetime.fromtimestamp(last_check_timestamp)    
+            last_check = datetime.fromtimestamp(last_check)    
         
         # if last check less than 3 hours ago, skip
-        if datetime.utcnow() - last_check_timestamp < timedelta(hours=3):
+        if datetime.utcnow() - last_check < timedelta(hours=3) and not force:
             return await discord_api_log("Skipping rescue check, last check was less than 3 hours ago",
-                last_check=Text(int(last_check_timestamp.timestamp()), TextMappingTypes.TIME),
+                last_check=Text(int(last_check.timestamp()), TextMappingTypes.TIME),
                 now=Text.Now()
             )
         
@@ -57,28 +61,26 @@ class cog_sisterRescue(commands.Cog):
         
         # sister rescue
         await discord_api_log("Sister rescue time!", time=Text.Now())
-        await self.sister_rescue()
-
-
-
-    async def sister_rescue(self):
+        
         sister_rescue_url = config.SISTER_RESCUE_URL
         token = config.SISTER_RESCUE_TOKEN
         import requests
 
         res = requests.post(sister_rescue_url, headers={"token" : token})
-        await discord_api_log("Sister rescue request sent", time=Text.Now())    
-    
+        await discord_api_log("Sister rescue request sent")    
+
+        self._last_rescue_time = datetime.utcnow()
 
     @app_commands.command(name="sisrescue", description="Hinoka rescuing big sis")
     @commands.has_any_role(*config.MOD_ROLES)
     @commands.cooldown(1, 60*60*24, commands.BucketType.user)
-    async def sister_rescue(self, ctx: discord.Interaction):
-        if self._check_for_big_sis_status.is_running():
-            await ctx.response.send_message("already on the way for big sis", ephemeral=True)
-            return
+    async def sister_rescue(self, ctx: discord.Interaction, force: bool = False):
+        await ctx.response.send_message("On the way to rescue big sis!", ephemeral=True)
         
-        self._check_for_big_sis_status.restart()
+        guild : discord.Guild = ctx.guild
+
+        await self._sister_rescue(guild, force=force)
+        
     
 async def setup(bot : commands.Bot):
     await bot.add_cog(cog_sisterRescue(bot))
