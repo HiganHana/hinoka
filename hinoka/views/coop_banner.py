@@ -204,20 +204,6 @@ class CoopBanner(View):
         
         # get mentions
         mentions = [member.mention for member in members]
-
-        # if mentions is empty
-        if len(mentions) == 0:
-            # use fetch
-            guild : discord.Guild = interaction.guild
-            member_iterator : AsyncIterator[discord.Member] = guild.fetch_members()
-            
-            # make sure coordinator excluded
-            mentions = []
-            async for member in member_iterator:
-                if role in member.roles and member.id != coordinator_id:
-                    mentions.append(member.mention)
-
-
         
         # get mentions text
         mentions_text = "\n".join(mentions)
