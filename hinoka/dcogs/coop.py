@@ -25,7 +25,7 @@ class cog_coop(GroupCogX, group_name="coop", group_description="Hinoka's coop co
         name : str,
         max_participants : PARTICIPANTS_OPTIONS = "No Limit",
         notes : str = None,
-        allow_overflow : bool = False,
+        allow_overflow : bool = True,
         embed_factory : EmbedFactory = coop_banner_embedf
     ):
         coop_channel : discord.ForumChannel = storage.COOP_CHANNEL
@@ -98,7 +98,7 @@ class cog_coop(GroupCogX, group_name="coop", group_description="Hinoka's coop co
         name : str,
         max_participants : PARTICIPANTS_OPTIONS = "No Limit",
         notes : str = None,
-        allow_overflow : bool = False,
+        allow_overflow : bool = True,
     ):
         await self._create_coop(
             ctx,

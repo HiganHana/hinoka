@@ -43,6 +43,11 @@ class CoopBanner(View):
         
         current_count = embed_keys.get("current_count")
 
+        # check if it's full
+        # "⭐" if allow_overflow else "⚫"
+        if current_count >= embed_keys.get("max_participants") and embed_keys.get("allow_overflow") == "⚫":
+            return await interaction.response.send_message("This coop is full (and no overflow allowed)", ephemeral=True)
+        
         reparsed = coop_banner_embedf.editEmbed(embed, 
             current_participants = f"{current_participants}\n{interaction.user.mention}\n",
             current_count = int(current_count) + 1,
@@ -61,6 +66,13 @@ class CoopBanner(View):
             f"{interaction.user.mention} have joined the coop [{role.mention}]",
             allowed_mentions=discord.AllowedMentions(roles=True),
         )
+        
+        # if meeting max participants
+        if int(current_count) + 1 >= int(embed_keys.get("max_participants")) and "[FULL]" not in interaction.message.channel.name:
+            await interaction.channel.edit(
+                name=f"[FULL] {interaction.channel.name}", 
+            )
+        
     
     @discord.ui.button(label="Leave", style=discord.ButtonStyle.red, custom_id="coop_banner_leave")
     async def leave(self, interaction: discord.Interaction, button: discord.ui.Button):
@@ -202,7 +214,7 @@ class CoopBanner(View):
                 if role in member.roles and member.id != coordinator_id:
                     mentions.append(member.mention)
 
-            
+
         
         # get mentions text
         mentions_text = "\n".join(mentions)
@@ -230,3 +242,12 @@ class CoopBanner(View):
             final_count=len(members)+1,
             final_list=mentions_text or "None",
         )
+        
+        # if meeting max participants
+        current_thread_name = interaction.message.channel.name
+        future_thread_name = current_thread_name
+        if int(current_count) == int(embed_keys.get("max_participants")) and "[FULL]" not in interaction.message.channel.name:
+            future_thread_name = f"[FULL] {current_thread_name}"
+            
+        if future_thread_name != current_thread_name:
+            await interaction.message.channel.edit(name=future_thread_name)
