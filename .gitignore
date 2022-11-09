@@ -152,3 +152,4 @@ cython_debug/
 #.idea/
 config.json
 hinoka/config.py
+hinoka.zip
