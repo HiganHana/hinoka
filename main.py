@@ -29,13 +29,15 @@ class CustomBotX(BotX):
         
         await discord_api_log("Coop Channel inited")
 
+intents =discord.Intents.default()
+intents.members = True
     
 deployer = DcDeployer(
     extensions=[],
     path='hinoka',
     storage=storage,
     config=config,
-    DISCORD_BOT_INTENTS= discord.Intents.default(),
+    DISCORD_BOT_INTENTS= intents,
     DISCORD_OBJ = CustomBotX
 )
 
