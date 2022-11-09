@@ -182,9 +182,9 @@ class CoopBanner(View):
         
         current_count = embed_keys.get("current_count")
 
-        # get members with role
-        members = role.members
-
+        # members with the role
+        members = [member for member in interaction.guild.members if role in member.roles]
+        
         # get mentions
         mentions = [member.mention for member in members]
 
@@ -208,3 +208,9 @@ class CoopBanner(View):
         )
         
         await interaction.response.send_message(f"Fixed the coop {role.id}", ephemeral=True)
+        await discord_api_log(f"{interaction.user} has fixed the coop {role.id}",
+            initial_count=int(current_count),
+            initial_list=current_participants,
+            final_count=len(members)+1,
+            final_list=mentions_text,
+        )
