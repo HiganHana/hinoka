@@ -4,8 +4,9 @@ from hinoka.cog.log import discord_api_log
 from hinoka.embeds import you_already_has_this_role
 from hinoka.embeds.coop import coop_banner_embedf, coop_thread_meta
 from discordPyExt.components.text import Text
-from hinoka.shared import config
+from hinoka.shared import config, storage
 from discordPyExt.components import Ctxl
+
 
 class CoopBanner(View):
     def __init__(
@@ -183,11 +184,22 @@ class CoopBanner(View):
         current_count = embed_keys.get("current_count")
 
         # members with the role
-        members = [member for member in interaction.guild.members if role in member.roles]
+        members = [member for member in interaction.guild.members if role in member.roles and member.id != coordinator_id]
         
         # get mentions
         mentions = [member.mention for member in members]
 
+        # if mentions is empty
+        if len(mentions) == 0:
+            # use fetch
+            guild : discord.Guild = interaction.guild
+            roles = await guild.fetch_roles()
+            role = discord.utils.get(roles, name=f"COOP_{thread_id}")
+            # make sure coordinator excluded
+            members = [member for member in guild.members if role in member.roles and member.id != coordinator_id]
+            mentions = [member.mention for member in members]
+    
+        
         # get mentions text
         mentions_text = "\n".join(mentions)
 
@@ -210,7 +222,7 @@ class CoopBanner(View):
         await interaction.response.send_message(f"Fixed the coop {role.id}", ephemeral=True)
         await discord_api_log(f"{interaction.user} has fixed the coop {role.id}",
             initial_count=int(current_count),
-            initial_list=current_participants,
+            initial_list=current_participants or "None",
             final_count=len(members)+1,
-            final_list=mentions_text,
+            final_list=mentions_text or "None",
         )
